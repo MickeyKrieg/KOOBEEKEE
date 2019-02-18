@@ -52,10 +52,12 @@ LOOP:
 
 
 $s = &get_data($CheckIsNew);
-#say $s;
-if ($s=~ /\{\"response\"\:\[\d+\,\{\"body\"\:\"kill\"\,\".*\"from_id\"\:(\d+)\,.*/){
+if ($s=~ /\{\"response\"\:\[\d+\,\{\"body\"\:\"K|kI|iL|lL|l\"\,\".*\"from_id\"\:(\d+)\,.*/){
+say $1;
+
 $url=$API.'messages.send?chat_id='.$ARGV[0].'&message=@id'.$1.' killed dice bot &v=5.92&access_token='.$token.'&attachment=&random_id='.$rand;
 $s=&get_data($url);
+sleep 3;
 die "Disabled by User";}
 if ($s=~ /\{\"response\"\:\[\d+\,\{\"body\"\:\"roll (\d+d\d+\+*\d*)\"\,\".*\"from_id\"\:(\d+)\,.*/)
 {
@@ -67,6 +69,16 @@ say $dices;
 $url=$API.'messages.send?chat_id='.$ARGV[0].'&message=@id'.$2.' DICE: '.$dices.'&v=5.92&access_token='.$token.'&attachment=&random_id='.$rand;
 $s=&get_data($url);
 say $s;
+}
+if ($s=~ /\{\"response\"\:\[\d+\,\{\"body\"\:\"makeplayer (.*)\"\,\".*\"from_id\"\:(\d+)\,.*/){
+$url=$API.'messages.send?chat_id='.$ARGV[0].'&message=@id'.$2.' created a charsheet  '.$1.'&v=5.92&access_token='.$token.'&attachment=&random_id='.$rand;
+$s=&get_data($url);
+mkdir('.\\players\\'.$1,0777);
+}
+if ($s=~ /\{\"response\"\:\[\d+\,\{\"body\"\:\"delplayer (.*)\"\,\".*\"from_id\"\:(\d+)\,.*/){
+$url=$API.'messages.send?chat_id='.$ARGV[0].'&message=@id'.$2.' deleted a charsheet  '.$1.'&v=5.92&access_token='.$token.'&attachment=&random_id='.$rand;
+$s=&get_data($url);
+rmdir('.\\players\\'.$1);
 }
 sleep 1;
 goto LOOP;
